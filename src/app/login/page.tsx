@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import LinkButton from '@/components/LinkButton'
 
-export default function Login() {
+const Login = () => {
   const [searchAccount, setSearchAccount] = useState(false)
   const [userPhone, setUserPhone] = useState<string>('')
   const router = useRouter()
@@ -55,3 +55,5 @@ export default function Login() {
     </main>
   )
 }
+
+export default Login
