@@ -12,31 +12,3 @@
 body, html, #root {
   height: 100%;
 }
-
-@keyframes pizza {
-  0% {
-    right: 5em
-  }
-
-  50% {
-    right: -4.5em;
-  }
-
-  100% {
-    right: 5em;
-  }
-}
-
-@keyframes hamburguer {
-  0% {
-    scale: 1;
-  }
-
-  50% {
-    scale: 1.1;
-  }
-
-  100% {
-    scale: 1;
-  }
-}
