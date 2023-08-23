@@ -10,6 +10,7 @@ interface Address {
   complement: string
   reference: string
   alias: string
+  id: number
 }
 
 const Account = () => {
@@ -34,6 +35,11 @@ const Account = () => {
   }
 
   const closeMessageBox = () => {
+    if (addressList.length > 0) {
+      for (let i = 0; i < addressList.length; i++) {
+        document.getElementById(`address-${i}`).style.display = 'none'
+      }
+    }
     if (
       messageDivRef.current &&
       informationDivRef.current &&
@@ -41,11 +47,15 @@ const Account = () => {
     ) {
       messageDivRef.current.style.display = 'none'
       informationDivRef.current.style.display = 'flex'
-      phoneRef.current.disabled = !phoneRef.current.disabled
     }
   }
 
   const openMessageBox = () => {
+    if (addressList.length > 0) {
+      for (let i = 0; i < addressList.length; i++) {
+        document.getElementById(`address-${i}`).style.display = 'block'
+      }
+    }
     if (
       messageDivRef.current &&
       informationDivRef.current &&
@@ -53,7 +63,6 @@ const Account = () => {
     ) {
       messageDivRef.current.style.display = 'block'
       informationDivRef.current.style.display = 'none'
-      phoneRef.current.disabled = !phoneRef.current.disabled
       setCep(0)
       setStreet('')
       setNumber(0)
@@ -75,18 +84,31 @@ const Account = () => {
       ) {
         setAddressList((prev) => [
           ...prev,
-          { cep, street, number, complement, reference, alias },
+          {
+            cep,
+            street,
+            number,
+            complement,
+            reference,
+            alias,
+            id: addressList.length + 1,
+          },
         ])
         openMessageBox()
       }
     }
   }
 
+  const removeAddress = (index: number) => {
+    const newAddressList = addressList.filter((address, i) => i !== index)
+    setAddressList(newAddressList)
+  }
+
   return (
-    <main className="flex flex-col bg-green-100 h-full">
+    <main className="flex flex-col bg-gradient-account h-full">
       <h3 className="self-center mt-[1em] text-[2em] font-bold">Conta</h3>
-      <div className="bg-red-100 mt-[1em]">
-        <div className="bg-blue-100 flex items-center">
+      <div className="mt-[1em]">
+        <div className="flex items-center">
           <div className="bg-slate-400 p-[1em] rounded-full ml-[.5em] mr-[1em] font-bold">
             CS
           </div>
@@ -97,25 +119,50 @@ const Account = () => {
           <input
             ref={phoneRef}
             type="text"
-            className="w-[35%]"
-            value={81912345678}
+            className="w-[40%] bg-transparent"
+            value={'(81)91234-5678'}
             disabled
           />
         </div>
         <div className="ml-[.5em] mt-[1em]">
-          <label className="font-bold mr-[.5em]">Endereço:</label>
+          <label className="font-bold mr-[.5em]">Endereço(s):</label>
           {addressList.length > 0 ? (
-            <>
-              {addressList.map((address) => (
-                <div key={address.cep}>{address.street}</div>
+            <div className="max-h-[15em] mt-[1em]">
+              {addressList.map((address, index) => (
+                <div
+                  key={index}
+                  id={`address-${index}`}
+                  className="bg-slate-400 rounded-lg p-[.5em] my-[1em] mx-auto w-3/4 relative border-[.2em] border-solid border-black"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold">{address.alias}</span>
+                    <div
+                      onClick={() => removeAddress(index)}
+                      className="bg-black w-[1.4em] absolute right-[.5em] top-[.5em] rounded-full text-center text-[1.5em] font-bold text-red-600"
+                    >
+                      X
+                    </div>
+                  </div>
+                  <div>
+                    <p>
+                      Rua {address.street}, {address.number}
+                    </p>
+                  </div>
+                  <div>
+                    <p>{address.complement}</p>
+                  </div>
+                  <div>
+                    <p>{address.reference}</p>
+                  </div>
+                </div>
               ))}
-            </>
+            </div>
           ) : (
             <p>Nenhum endereço cadastrado</p>
           )}
           <div
             ref={informationDivRef}
-            className="flex-col justify-center p-[.2em] hidden"
+            className="flex-col justify-center p-[.2em] hidden bg-slate-400 mr-[.5em] rounded-[.5em]"
           >
             <div className="mt-[.8em]">
               <label className="mr-[.5em]">CEP:</label>
@@ -200,7 +247,7 @@ const Account = () => {
                 onClick={() => saveAddress()}
                 className="bg-green-400 py-[.5em] px-[1em] rounded-[1em] text-white"
               >
-                Salvar
+                Adicionar
               </button>
             </div>
           </div>
@@ -209,7 +256,7 @@ const Account = () => {
       <div
         ref={messageDivRef}
         onClick={toggleMessage}
-        className="bg-gray-700 text-white mt-[2em] w-[80%] my-0 mx-auto p-[.5em] rounded-[1em]"
+        className="bg-gray-700 text-white mt-[1em] w-[80%] my-0 mx-auto p-[.5em] rounded-[1em]"
       >
         <p>
           Olá, Cleber Silva. Caso esteja faltando alguma informação ou se quiser
